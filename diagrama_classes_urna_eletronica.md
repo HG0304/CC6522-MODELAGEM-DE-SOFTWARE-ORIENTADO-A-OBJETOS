@@ -70,7 +70,7 @@ classDiagram
     UEv "1" --> "*" Candidato : carrega
     UEv "1" --> "*" Eleitor : valida
     UEv "1" --> "*" Voto : registra
-    Voto "*" --> "1" Eleitor : pertence
+    Voto "1..8" --> "1" Eleitor : pertence
     Voto "*" --> "0..1" Candidato : refere-se
     UEg "1" --> "1" Resultado : totaliza
 ```
