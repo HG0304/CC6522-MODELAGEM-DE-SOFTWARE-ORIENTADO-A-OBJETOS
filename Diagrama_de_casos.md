@@ -30,21 +30,22 @@ Sistema de votação eletrônica dividido em dois módulos:
 
 ---
 
-### UC_02 – Validar UEv
+### UC_2 – Votar
 
-- **Função:** Validar UEv cadastrada para autenticação e funcionamento.
-- **Atores:** Administrador
-- **Pré-condição:** UEv cadastrada.
-- **Pós-condição:** UEv validada e autorizada.
+- **Função:** Realizar o voto eletrônico.
+- **Atores:** Eleitor
+- **Pré-condição:** Eleitor autenticado.
+- **Pós-condição:** Voto registrado.
 
 **Fluxo Principal:**  
-1. Administrador seleciona UEv.  
-2. Sistema verifica e valida.  
-3. Confirma validação.
+1. Eleitor seleciona candidato(s).  
+2. Confirma, altera, vota em branco ou nulo.  
+3. Sistema registra voto.  
+4. Confirma registro.
 
 **Fluxos Secundários:**  
-- Dados inconsistentes.  
-- UEv não encontrada.
+- Voto duplicado bloqueado.  
+- Falha no registro.
 
 ---
 
@@ -183,24 +184,6 @@ Sistema de votação eletrônica dividido em dois módulos:
 
 ---
 
-### UC_11 – Votar
-
-- **Função:** Realizar o voto eletrônico.
-- **Atores:** Eleitor
-- **Pré-condição:** Eleitor autenticado.
-- **Pós-condição:** Voto registrado.
-
-**Fluxo Principal:**  
-1. Eleitor seleciona candidato(s).  
-2. Confirma, altera, vota em branco ou nulo.  
-3. Sistema registra voto.  
-4. Confirma registro.
-
-**Fluxos Secundários:**  
-- Voto duplicado bloqueado.  
-- Falha no registro.
-
----
 
 ## Requisitos e Observações Gerais
 

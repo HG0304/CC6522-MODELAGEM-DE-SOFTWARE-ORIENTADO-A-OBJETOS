@@ -14,8 +14,14 @@ classDiagram
         + cadastrarUEv(uev: UEv) : void
         + validarUEv(uev: UEv) : bool
         + disponibilizarListas() : void
-        + totalizarVotos() : Resultado
+        + totalizarVotos(lista : ListaVotos) : Resultado
         + gerarRelatorio() : void
+        + gerenciarCandidatos(candidato: Candidato) : void
+        + gerenciarEleitores(eleitor: Eleitor) : void
+        + validaCandidatos(candidato: Candidato) : candidato
+        + validaEleitores(eleitor: Eleitor) : eleitor
+        + obterVotos() : List
+        + obterCandidatos() : List
     }
 
     class UEv {
