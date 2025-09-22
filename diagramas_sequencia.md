@@ -34,6 +34,55 @@ sequenceDiagram
 - Se os dados forem inválidos ou incompletos, o UEg informa o erro ao administrador.
 - O diagrama utiliza o bloco `alt` para representar o fluxo alternativo (secundário).
 
+## Diagrama de Sequência – UC_02: Votar
+
+```mermaid
+sequenceDiagram
+    actor ele as Eleitor
+    participant UEv
+    participant Voto
+
+    ele ->> UEv: autenticarEleitor(eleitor: Eleitor) : bool
+    alt Eleitor autenticado
+        UEv -->> ele: autenticação ok
+        ele ->> UEv: selecionarCandidato(num: int)
+        alt Voto válido
+            UEv ->> Voto: registrar(candidato: Candidato, eleitor: Eleitor)
+            activate Voto
+            Voto -->> UEv: voto registrado
+            deactivate Voto
+            UEv -->> ele: Confirmação de voto
+        else Voto branco
+            UEv ->> Voto: registrar(tipo="branco", eleitor: Eleitor)
+            Voto -->> UEv: voto registrado
+            UEv -->> ele: Confirmação de voto branco
+        else Voto nulo
+            UEv ->> Voto: registrar(tipo="nulo", eleitor: Eleitor)
+            Voto -->> UEv: voto registrado
+            UEv -->> ele: Confirmação de voto nulo
+        end
+    else Eleitor não autenticado
+        UEv -->> ele: Erro - não autenticado
+    end
+
+    alt Voto duplicado
+        UEv -->> ele: Erro - voto já registrado
+    else Falha no registro
+        UEv -->> ele: Erro - falha no sistema
+    end
+```
+
+### Explicação
+- O Eleitor solicita autenticação à UEv.
+- Se a autenticação for válida, o eleitor pode selecionar um candidato.
+- O sistema permite três caminhos principais:
+    - Voto válido: o eleitor escolhe um candidato, o voto é registrado e confirmado.
+    - Voto em branco: o eleitor opta por não escolher candidato, o voto em branco é registrado e confirmado.
+    - Voto nulo: o eleitor insere um número inválido, o voto nulo é registrado e confirmado.
+- Caso o eleitor não esteja autenticado, o sistema retorna erro de autenticação.
+- Se o eleitor tentar votar novamente, o sistema bloqueia o voto duplicado.
+- Caso haja falha técnica no registro do voto, o sistema informa erro ao eleitor.
+
 ## Diagrama de Sequência – UC_03: Gerenciar Candidatos
 
 Este diagrama de sequência representa o fluxo principal e os fluxos secundários (dados inválidos e exclusão bloqueada) do caso de uso "Gerenciar Candidatos".
@@ -221,3 +270,106 @@ sequenceDiagram
 - O UEg solicita a lista à UEv.
 - Se a lista não estiver vazia, o UEg apresenta a lista ao administrador.
 - Se a lista estiver vazia, o UEg informa ao administrador que não há eleitores cadastrados.
+
+## Diagrama de Sequência – UC_08: Gerar Relatórios
+```mermaid
+sequenceDiagram
+    actor adm as Administrador
+    participant UEg
+    participant Resultado
+
+    adm ->> UEg: solicitar relatório
+    activate UEg
+    UEg ->> Resultado: gerarRelatorio()
+    activate Resultado
+    alt Geração bem-sucedida
+        Resultado -> Resultado: compilar dados
+        Resultado -> Resultado: gerarTabela()
+        Resultado -> Resultado: gerarGrafico()
+        Resultado -->> UEg: relatório pronto
+        UEg -->> adm: Relatório exibido/salvo
+    else Falha na geração
+        Resultado -->> UEg: erro de geração
+        UEg -->> adm: Erro - falha ao gerar relatório
+    end
+    deactivate Resultado
+    deactivate UEg
+```
+
+### Explicação
+- O Administrador solicita ao UEg a geração de relatórios.
+- O UEg aciona o componente Resultado para compilar os dados.
+- Se a geração for bem-sucedida:
+- Os dados são compilados.
+- O sistema gera tabelas e gráficos.
+- O relatório final é retornado ao administrador, podendo ser exibido ou salvo.
+- Se ocorrer falha na geração, o sistema retorna um erro ao administrador.
+
+## Diagrama de Sequência UC_09: Contabilizar Brancos / Nulos / Ausentes
+```mermaid
+sequenceDiagram
+    actor adm as Administrador
+    participant UEg
+    participant UEv
+    participant Resultado
+
+    adm ->> UEg: solicitar contagem de brancos/nulos/ausentes
+    activate UEg
+    UEg ->> UEv: obterVotos() : Lista
+    activate UEv
+    alt Votos disponíveis
+        UEv -->> UEg: listaVotos
+        UEg ->> Resultado: processar(listaVotos)
+        activate Resultado
+        Resultado -> Resultado: contabilizar votos brancos
+        Resultado -> Resultado: contabilizar votos nulos
+        Resultado -> Resultado: identificar ausentes
+        Resultado -->> UEg: contagem final
+        deactivate Resultado
+        UEg -->> adm: Exibe contagem
+    else Nenhum voto registrado
+        UEv -->> UEg: lista vazia
+        UEg -->> adm: Mensagem "Sem votos para contabilizar"
+    end
+    deactivate UEv
+    deactivate UEg
+```
+
+### Explicação
+- O Administrador solicita ao UEg a contabilização de votos brancos, nulos e ausentes.
+- O UEg requisita a lista de votos ao UEv.
+- Se houver votos registrados:
+- O Resultado processa a lista.
+- São contabilizados os votos brancos, nulos e identificados os eleitores ausentes.
+- O sistema retorna a contagem final ao administrador.
+- Se não houver votos registrados, o sistema informa que não existem votos para contabilizar.
+
+## Diagrama de Sequência – UC_10: Confirmar Número de Inscrição
+
+```mermaid
+sequenceDiagram
+    actor ele as Eleitor
+    participant UEv
+    participant Eleitor
+
+    ele ->> UEv: inserir número de inscrição
+    activate UEv
+    UEv ->> Eleitor: autenticar(documento: String) : bool
+    alt Número válido
+        Eleitor -->> UEv: autenticação ok
+        UEv -->> ele: Confirmação de autenticidade
+    else Número inválido ou não cadastrado
+        Eleitor -->> UEv: erro
+        UEv -->> ele: Erro - inscrição inválida
+    end
+    deactivate UEv
+```
+
+### Explicação
+- O Eleitor insere seu número de inscrição na UEv.
+- A UEv solicita autenticação ao objeto Eleitor.
+- Se o número for válido e estiver cadastrado:
+- A autenticação é confirmada.
+- O sistema retorna confirmação de autenticidade ao eleitor.
+- Se o número for inválido ou não estiver cadastrado:
+- O sistema retorna erro de inscrição inválida ao eleitor.
