@@ -16,7 +16,7 @@ stateDiagram-v2
     Cadastrada --> Validada : validarUEv()
     Validada --> CarregandoDados : disponibilizarListas()
     CarregandoDados --> Pronta : dadosDisponíveis
-    Pronta --> AutenticandoEleitor : iniciarVotação()
+    Pronta --> AutenticandoEleitor : iniciarVotacao()
     AutenticandoEleitor --> Autenticada : autenticarEleitor()
     Autenticada --> Votando : selecionarCandidato()
     Votando --> Confirmando : confirmarVoto()
@@ -48,7 +48,7 @@ stateDiagram-v2
     NãoAutenticado --> Autenticado : autenticar(documento)
     Autenticado --> Votando : selecionarCandidato()
     Votando --> Confirmando : confirmarVoto()
-    Confirmando --> Votou : registrar()
+    Confirmando --> Votou : confirmarVoto()  // disparador que resulta em Voto.registrar()
     Votou --> [*]
 
     %% Exceções
@@ -72,9 +72,10 @@ stateDiagram-v2
     EmEdição --> Confirmado : confirmarVoto()
     EmEdição --> Branco : votoBranco()
     EmEdição --> Nulo : votoNulo()
-    Confirmado --> Enviado : enviarResultados()
-    Branco --> Enviado
-    Nulo --> Enviado
+    Confirmado --> Registrado : registrar()  // Voto.registrar()
+    Branco --> Registrado
+    Nulo --> Registrado
+    Registrado --> Enviado : enviarResultados()  // UEv envia resultados agregados
     Enviado --> [*]
 ```
 

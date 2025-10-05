@@ -18,10 +18,9 @@ classDiagram
         + gerarRelatorio() : void
         + gerenciarCandidatos(candidato: Candidato) : void
         + gerenciarEleitores(eleitor: Eleitor) : void
-        + validaCandidatos(candidato: Candidato) : candidato
-        + validaEleitores(eleitor: Eleitor) : eleitor
-        + obterVotos() : List
-        + obterCandidatos() : List
+        + validaCandidatos(candidato: Candidato) : Candidato
+        + validaEleitores(eleitor: Eleitor) : Eleitor
+        // Observação: getters de votos/candidatos/eleitores moved to UEv
     }
 
     class UEv {
@@ -30,11 +29,16 @@ classDiagram
         - listaEleitores : List<Eleitor>
         - votos : List<Voto>
         + autenticarEleitor(eleitor: Eleitor) : bool
+        + iniciarVotacao() : void
         + selecionarCandidato(num: int) : void
         + confirmarVoto() : void
         + votoBranco() : void
         + votoNulo() : void
+        + registrarVoto(voto: Voto) : void
         + enviarResultados() : void
+        + obterVotos() : List<Voto>
+        + obterCandidatos() : List<Candidato>
+        + obterEleitores() : List<Eleitor>
     }
 
     class Eleitor {
@@ -43,6 +47,7 @@ classDiagram
         - foto : String
         - jaVotou : bool
         + autenticar(documento: String) : bool
+        // Note: Eleitor não persiste voto diretamente; ele aciona confirmarVoto()
     }
 
     class Candidato {
@@ -58,6 +63,7 @@ classDiagram
         - candidato : Candidato
         - eleitor : Eleitor
         + registrar() : void
+        // Voto.registrar() persiste o voto; UEv agrupa e envia resultados
     }
 
     class Resultado {
@@ -65,6 +71,10 @@ classDiagram
         - votosBrancos : int
         - votosNulos : int
         - ausentes : List<Eleitor>
+        + processar(lista : List<Voto>) : void
+        + contabilizarBrancos() : int
+        + contabilizarNulos() : int
+        + identificarAusentes(listaEleitores: List<Eleitor>) : List<Eleitor>
         + gerarTabela() : void
         + gerarGrafico() : void
     }
@@ -89,7 +99,7 @@ classDiagram
 
 ### UEv (Unidade de Votação)
 - **Atributos:** id, listaCandidatos, listaEleitores, votos
-- **Métodos:** autenticarEleitor(), selecionarCandidato(), confirmarVoto(), votoBranco(), votoNulo(), enviarResultados()
+- **Métodos:** autenticarEleitor(), iniciarVotacao(), selecionarCandidato(), confirmarVoto(), votoBranco(), votoNulo(), registrarVoto(), enviarResultados(), obterVotos(), obterCandidatos(), obterEleitores()
 
 ### Eleitor
 - **Atributos:** documento, nome, foto, jaVotou
@@ -104,4 +114,4 @@ classDiagram
 
 ### Resultado
 - **Atributos:** votosCandidatos, votosBrancos, votosNulos, ausentes
-- **Métodos:** gerarTabela(), gerarGrafico()
+- **Métodos:** processar(), contabilizarBrancos(), contabilizarNulos(), identificarAusentes(), gerarTabela(), gerarGrafico()
